@@ -13,12 +13,7 @@ void main() {
       ChangeNotifierProvider(create: (context) => TaskViewModel3()),
     ],
     child: HomePage(),
-  )
-//    ChangeNotifierProvider(
-//      create: (context) => TaskViewModel(),
-//      child: HomePage(),
-//    ),
-      );
+  ));
 }
 
 class MyApp extends StatelessWidget {

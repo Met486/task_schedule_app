@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
 class TopPage extends StatelessWidget {
+  Size size;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          width: 300,
-          height: 300,
-          color: Colors.green,
-          child: const Text('top'),
-          alignment: Alignment.center,
+    size = MediaQuery.of(context).size;
+    return Center(
+      child: Container(
+        width: size.width * 0.8,
+        height: size.height * 0.8,
+        color: Colors.grey,
+        child: Column(
+          children: [const Text('top'), const Text('後々カレンダーに変更')],
         ),
+        alignment: Alignment.topCenter,
       ),
     );
   }

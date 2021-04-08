@@ -1,7 +1,7 @@
 //タスクの一つ一つを管理
 
 import 'package:flutter/material.dart';
-import 'package:task_schedule_app/add_dialog.dart';
+import 'package:task_schedule_app/add_dialog/add_dialog.dart';
 import 'package:task_schedule_app/task.dart';
 
 class TaskItem extends StatelessWidget {
@@ -36,6 +36,7 @@ class TaskItem extends StatelessWidget {
         tileColor: Colors.white,
         title: Text(task.title),
         subtitle: Text(task.subtitle),
+
         //      tileColor: priorityColors(task.priority),
       ),
     );

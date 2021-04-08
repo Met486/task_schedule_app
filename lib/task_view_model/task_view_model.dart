@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:task_schedule_app/db_provider.dart';
 import 'package:task_schedule_app/task.dart';
 
 class TaskViewModel extends ChangeNotifier {
@@ -12,6 +14,19 @@ class TaskViewModel extends ChangeNotifier {
   String get strValidateTitle => _strValidateTitle;
   bool _validateTitle = false;
   bool get validateTitle => _validateTitle;
+
+  final _taskController = StreamController<List<Task>>();
+  Stream<List<Task>> get taskStream => _taskController.stream;
+
+  getTasks() async {
+    _tasks = (await DBProvider.db.getAllTasks('1'));
+    _taskController.sink.add(await DBProvider.db.getAllTasks('1'));
+    print("taskViewModel getTasks is Called");
+  }
+
+  TaskViewModel() {
+    getTasks();
+  }
 
   List<Task> _tasks = [];
   UnmodifiableListView<Task> get tasks {
@@ -47,9 +62,13 @@ class TaskViewModel extends ChangeNotifier {
       subtitle: subtitleController.text,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      taskType: 1,
     );
     _tasks.add(newTask);
-    print('tasks length ${tasks.length}');
+    print("task_view_model addTask is called");
+    newTask.assignUUID();
+    DBProvider.db.createTask(newTask);
+    getTasks();
     notifyListeners(); //todo 不要？
     clear();
   }
@@ -62,11 +81,15 @@ class TaskViewModel extends ChangeNotifier {
     updateTask.subtitle = subtitleController.text;
     updateTask.updatedAt = DateTime.now();
     _tasks[updateIndex] = updateTask;
+    DBProvider.db.updateTask(updateTask); //
+    getTasks(); //
     clear();
   }
 
-  void deleteTask(int index) {
+  void deleteTask(int index, String id) {
     _tasks.removeAt(index);
+    DBProvider.db.deleteTask(id);
+    print("taskViewModel deleteTask is called");
     notifyListeners();
   }
 

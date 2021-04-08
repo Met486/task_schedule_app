@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:task_schedule_app/add_dialog2.dart';
+import 'package:task_schedule_app/add_dialog/add_dialog2.dart';
 import 'package:task_schedule_app/task_item.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model2.dart';
 
@@ -18,6 +18,7 @@ class MicroTaskListView2 extends StatelessWidget {
     //final TaskViewModel taskViewModel = Provider.of<TaskViewModel>(context);
 
     return ListView(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
       children: [
         ElevatedButton(
@@ -41,6 +42,7 @@ class MicroTaskListView2 extends StatelessWidget {
             child: SizedBox(
               height: 400,
               child: ListView.separated(
+                  padding: EdgeInsets.zero,
                   itemBuilder: (context, index) {
                     final task = taskViewModel.tasks[index];
                     //var task = taskViewModel.tasks[index];
@@ -48,7 +50,7 @@ class MicroTaskListView2 extends StatelessWidget {
                       key: UniqueKey(),
                       onDismissed: (direction) {
                         if (direction == DismissDirection.endToStart) {
-                          taskViewModel.deleteTask(index);
+                          taskViewModel.deleteTask(index, task.id);
                         } else {
                           taskViewModel.toggleDone(index, true);
                         }

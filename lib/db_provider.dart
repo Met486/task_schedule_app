@@ -46,7 +46,6 @@ class DBProvider {
   createTask(Task task) async {
     final db = await database;
     var res = await db.insert(_tableName, task.toMap());
-    print("db_provider createdTask is called");
     return res;
   }
 
@@ -57,8 +56,6 @@ class DBProvider {
         .query(_tableName, where: 'taskType = ?', whereArgs: [taskType]);
     List<Task> list =
         res.isNotEmpty ? res.map((c) => Task.fromMap(c)).toList() : [];
-    print("db_provider getAllTasks is called");
-    print(list.length);
     return list;
   }
 

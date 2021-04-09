@@ -1,9 +1,9 @@
 //タスクを管理する3つの大枠を管理
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_schedule_app/micro_task_view_model/micro_task_list_view.dart';
-import 'package:task_schedule_app/micro_task_view_model/micro_task_list_view2.dart';
-import 'package:task_schedule_app/micro_task_view_model/micro_task_list_view3.dart';
+import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
 class TaskList extends StatefulWidget {
   TaskList({Key key}) : super(key: key);
@@ -39,21 +39,24 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     //    final Size size = MediaQuery.of(context).size;
-    return AnimatedContainer(
-        color: Colors.white24, //TODO 表示領域確認
-        duration: Duration(seconds: 1),
-        curve: Curves.fastOutSlowIn,
-        child: Center(
-          child: LayoutBuilder(
-            builder: (context, BoxConstraints constraints) {
-              if (constraints.maxWidth > 600) {
-                return _buildWideList();
-              } else {
-                return _buildNormalList();
-              }
-            },
-          ),
-        ));
+    return Consumer<TaskViewModel>(builder: (context, taskViewModel, _) {
+      //TODO いらないかも
+      return AnimatedContainer(
+          color: Colors.white24, //TODO 表示領域確認
+          duration: Duration(seconds: 1),
+          curve: Curves.fastOutSlowIn,
+          child: Center(
+            child: LayoutBuilder(
+              builder: (context, BoxConstraints constraints) {
+                if (constraints.maxWidth > 600) {
+                  return _buildWideList();
+                } else {
+                  return _buildNormalList();
+                }
+              },
+            ),
+          ));
+    });
   }
 
   Widget _buildWideList() {
@@ -74,13 +77,16 @@ class _TaskListState extends State<TaskList> {
             },
             child: AnimatedContainer(
               width: widthValue(1),
-              height: selectedLeft ? size.height * 0.8 : size.height * 0.4,
+              //height: selectedLeft ? size.height * 0.8 : size.height * 0.8,
+              height: size.height * 0.8,
               color: containerColorValue(1),
               duration: Duration(seconds: 1),
               curve: Curves.fastOutSlowIn,
               margin: paddingValue(1),
               padding: paddingValue(1),
-              child: MicroTaskListView(),
+              child: MicroTaskListView(
+                param: '1',
+              ),
             ),
           ),
         ),
@@ -98,13 +104,15 @@ class _TaskListState extends State<TaskList> {
             },
             child: AnimatedContainer(
               width: widthValue(2),
-              height: selectedCenter ? size.height * 0.8 : size.height * 0.4,
+              height: selectedCenter ? size.height * 0.8 : size.height * 0.8,
               color: containerColorValue(2),
               duration: Duration(seconds: 1),
               curve: Curves.fastOutSlowIn,
               margin: paddingValue(2),
               padding: paddingValue(2),
-              child: MicroTaskListView2(),
+              child: MicroTaskListView(
+                param: '2',
+              ),
             ),
           ),
         ),
@@ -122,13 +130,13 @@ class _TaskListState extends State<TaskList> {
               },
               child: AnimatedContainer(
                 width: widthValue(3),
-                height: selectedRight ? size.height * 0.8 : size.height * 0.4,
+                height: selectedRight ? size.height * 0.8 : size.height * 0.8,
                 color: containerColorValue(3),
                 duration: Duration(seconds: 1),
                 curve: Curves.fastOutSlowIn,
                 margin: paddingValue(3),
                 padding: paddingValue(3),
-                child: MicroTaskListView3(),
+                child: MicroTaskListView(param: '3'),
               )),
         ),
       ],
@@ -161,7 +169,9 @@ class _TaskListState extends State<TaskList> {
               curve: Curves.fastOutSlowIn,
               margin: paddingValue(1),
               padding: paddingValue(1),
-              child: MicroTaskListView(),
+              child: MicroTaskListView(
+                param: '1',
+              ),
             ),
           ),
         ),
@@ -187,7 +197,9 @@ class _TaskListState extends State<TaskList> {
               curve: Curves.fastOutSlowIn,
               margin: paddingValue(2),
               padding: paddingValue(2),
-              child: MicroTaskListView2(),
+              child: MicroTaskListView(
+                param: '2',
+              ),
             ),
           ),
         ),
@@ -213,7 +225,9 @@ class _TaskListState extends State<TaskList> {
                 curve: Curves.fastOutSlowIn,
                 margin: paddingValue(3),
                 padding: paddingValue(3),
-                child: MicroTaskListView3(),
+                child: MicroTaskListView(
+                  param: '3',
+                ),
               )),
         ),
       ],

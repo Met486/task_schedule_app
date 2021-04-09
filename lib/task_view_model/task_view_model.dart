@@ -6,6 +6,8 @@ import 'package:task_schedule_app/db_provider.dart';
 import 'package:task_schedule_app/task.dart';
 
 class TaskViewModel extends ChangeNotifier {
+  final String param;
+
   String get editingTitle => titleController.text;
   String get editingSubtitle => subtitleController.text;
   TextEditingController titleController = TextEditingController();
@@ -19,12 +21,13 @@ class TaskViewModel extends ChangeNotifier {
   Stream<List<Task>> get taskStream => _taskController.stream;
 
   getTasks() async {
-    _tasks = (await DBProvider.db.getAllTasks('1'));
-    _taskController.sink.add(await DBProvider.db.getAllTasks('1'));
+    _tasks = (await DBProvider.db.getAllTasks(param));
+    _taskController.sink.add(await DBProvider.db.getAllTasks(param));
     print("taskViewModel getTasks is Called");
+    print("get tasks is called param : " + param);
   }
 
-  TaskViewModel() {
+  TaskViewModel({this.param}) {
     getTasks();
   }
 
@@ -56,15 +59,16 @@ class TaskViewModel extends ChangeNotifier {
     }
   }
 
-  void addTask() {
+  void addTask(String param) {
     final newTask = Task(
       title: titleController.text,
       subtitle: subtitleController.text,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      taskType: 1,
+      taskType: int.parse(param),
     );
     _tasks.add(newTask);
+    print(_tasks.last.title);
     print("task_view_model addTask is called");
     newTask.assignUUID();
     DBProvider.db.createTask(newTask);
@@ -89,7 +93,6 @@ class TaskViewModel extends ChangeNotifier {
   void deleteTask(int index, String id) {
     _tasks.removeAt(index);
     DBProvider.db.deleteTask(id);
-    print("taskViewModel deleteTask is called");
     notifyListeners();
   }
 

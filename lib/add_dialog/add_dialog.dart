@@ -3,10 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:task_schedule_app/task.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
-class AddDialog extends StatelessWidget {
-  AddDialog({Key key, this.editTask}) : super(key: key);
-
+class AddDialog extends StatefulWidget {
+  final String param;
   final Task editTask;
+
+  AddDialog({this.param, key, this.editTask}) : super(key: key);
+
+  @override
+  _AddDialogState createState() => _AddDialogState();
+}
+
+class _AddDialogState extends State<AddDialog> {
+  //AddDialog({Key key, this.editTask}) : super(key: key);
+  //final Task editTask;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +51,7 @@ class AddDialog extends StatelessWidget {
   }
 
   bool _isEdit() {
-    return editTask != null;
+    return widget.editTask != null;
   }
 
   void tapAddButton(BuildContext context) {
@@ -50,9 +59,12 @@ class AddDialog extends StatelessWidget {
     viewModel.setValidateTitle(true);
 
     if (viewModel.validateTaskTitle()) {
-      _isEdit() ? viewModel.updateTask(editTask) : viewModel.addTask();
+      _isEdit()
+          ? viewModel.updateTask(widget.editTask)
+          : viewModel.addTask(widget.param);
       Navigator.of(context).pop();
     }
+    viewModel.notifyListeners();
   }
 
   Widget _buildInputField(BuildContext context,

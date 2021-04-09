@@ -25,7 +25,7 @@ class TaskViewModel extends ChangeNotifier {
     _taskController.sink.add(await DBProvider.db.getAllTasks(param));
     print("taskViewModel getTasks is Called");
     print("get tasks is called param : " + param);
-    print('TaskViewModel param:${param} tasks.length:${_tasks.length}');
+    print('TaskViewModel param:${param} tasks.length:${tasks.length}');
   }
 
   TaskViewModel(this.param) {

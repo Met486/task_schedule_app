@@ -7,11 +7,14 @@ import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 ////    StateNotifierProvider<TaskViewModel, List<Task>>((ref) {
 ////  return TaskViewModel([]);
 ////});
+//
+//final familyTaskViewProvider =
+//    Provider.family<TaskViewModel, String>((ref, String parameter) {
+//  return TaskViewModel('');
+//});
 
-final familyTaskViewProvider =
-    Provider.family<TaskViewModel, String>((ref, String parameter) {
-  return TaskViewModel('');
-});
+final taskViewProviderFamily =
+    ChangeNotifierProviderFamily((ref, String param) => TaskViewModel(param));
 
 void main() {
   runApp(ProviderScope(child: HomePage()));

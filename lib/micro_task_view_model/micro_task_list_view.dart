@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_schedule_app/add_dialog/add_dialog.dart';
+import 'package:task_schedule_app/main.dart';
 import 'package:task_schedule_app/task_item.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
@@ -17,11 +18,17 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
   @override
   Widget build(BuildContext context) {
     //final TaskViewModel taskViewModel = Provider.of<TaskViewModel>(context);
+//    final taskViewModel = Provider<TaskViewModel>((ref) {
+//      return TaskViewModel(widget.param);
+//    });
     final taskViewModel = TaskViewModel('1');
     final taskFamily =
         Provider.family<TaskViewModel, String>((ref, String param) {
       return TaskViewModel(param);
     });
+    //final taskViewModel = TaskViewModel(widget.param);
+    print(taskViewModel.tasks.length);
+    // print('tasks.length:${watch(taskViewModel).tasks.length}');
 
     return ListView(
       padding: EdgeInsets.zero,
@@ -44,23 +51,29 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
         ),
         Consumer(builder: (
           context,
-          //taskViewModel,
-          read,
-          _,
+          watch,
+          child,
         ) {
-          //if (read(taskFamily('1'))) {
-          if (taskViewModel.tasks.isEmpty) {
-            //todo){
+          //if (watch(taskFamily('1'))) {
+          print(
+              'taskFamily(1).tasks.isEmpty : ${watch(taskFamily('1')).tasks.isEmpty}');
+          if (watch(taskFamily('1')).tasks.isEmpty) {
+            //if (taskViewModel.tasks.isEmpty) {
+            //todo
             // if (TaskViewModel('1').tasks.isEmpty) {
             //if (taskViewModel[].tasks.isEmpty) {
-            return _emptyView();
+            // return _emptyView();
+            return Text(
+                '${watch(taskViewProviderFamily(widget.param)).tasks.length}');
           }
           return SizedBox(
             height: MediaQuery.of(context).size.height,
             child: ListView.separated(
-                padding:EdgeInsets.zero,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
-                  print("アイテムを表示"); //todo
+                  print("アイテムを表示 widget.param ${widget.param}"); //todo
+                  //final task = TaskViewModel(widget.param).tasks[index];
+                  final task = watch(taskFamily('1')).tasks[index];
                   //final task = TaskViewModel('1').tasks[index];
                   //final task = taskViewModel.tasks[index];
                   //var task = taskViewModel.tasks[index];

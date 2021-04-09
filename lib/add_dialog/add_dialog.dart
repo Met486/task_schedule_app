@@ -80,6 +80,7 @@ class _AddDialogState extends State<AddDialog> {
     print('add button');
     print('widget param is ${viewModel.param}');
     //viewModel.addTask(widget.param);
+    print(viewModel.tasks.length);
 
     //Navigator.of(context).pop();
 

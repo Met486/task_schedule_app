@@ -58,7 +58,7 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
           return SizedBox(
             height: MediaQuery.of(context).size.height,
             child: ListView.separated(
-                padding: EdgeInsets.zero,
+                padding:EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   print("アイテムを表示"); //todo
                   //final task = TaskViewModel('1').tasks[index];

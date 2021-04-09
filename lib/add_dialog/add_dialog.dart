@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
+import 'package:task_schedule_app/main.dart';
 import 'package:task_schedule_app/task.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
 class AddDialog extends StatefulWidget {
   final String param;
@@ -23,32 +23,44 @@ class _AddDialogState extends State<AddDialog> {
       width: 300,
       height: 300,
       child: Consumer(
-        builder: (context, viewModel, _) {
+        //builder: (context, viewModel, _) {
+        builder: (context, watch, child) {
           return ListView(
             children: <Widget>[
               _buildInputField(
                 context,
                 title: 'Title',
+                textEditingController:
+                    watch(taskViewProviderFamily(widget.param)).titleController,
                 //textEditingController: viewModel.titleController,
-                textEditingController: TaskViewModel('1').titleController,
+                //textEditingController: TaskViewModel('1').titleController,
 
                 errorText:
-                    //   viewModel.validateTitle ? viewModel.strValidateTitle : null,
-                    TaskViewModel('1').validateTitle
-                        ? TaskViewModel('1').strValidateTitle
+                    watch(taskViewProviderFamily(widget.param)).validateTitle
+                        ? watch(taskViewProviderFamily(widget.param))
+                            .strValidateTitle
                         : null,
+                //   viewModel.validateTitle ? viewModel.strValidateTitle : null,
+//                    TaskViewModel('1').validateTitle
+//                        ? TaskViewModel('1').strValidateTitle
+//                        : null,
                 didChanged: (_) {
+                  watch(taskViewProviderFamily(widget.param))
+                      .updateValidateTitle();
                   //viewModel.updateValidateTitle();
-                  TaskViewModel('1').updateValidateTitle();
+                  //TaskViewModel('1').updateValidateTitle();
                 },
               ),
               _buildInputField(
                 context,
                 title: 'subtitle',
-                textEditingController: TaskViewModel('1').subtitleController,
+                textEditingController:
+                    watch(taskViewProviderFamily(widget.param))
+                        .subtitleController,
+                //textEditingController: TaskViewModel('1').subtitleController,
                 errorText: null,
               ),
-              _buildAddButton(context),
+              _buildAddButton(context, watch),
             ],
           );
         },
@@ -60,11 +72,13 @@ class _AddDialogState extends State<AddDialog> {
     return widget.editTask != null;
   }
 
-  void tapAddButton(BuildContext context) {
+  void tapAddButton(BuildContext context, watch) {
     //final viewModel = Provider.of<TaskViewModel>(context, listen: false);
 
     //final viewModel = StateNotifierProvider((ref) => TaskViewModel('1'));
-    final viewModel = TaskViewModel(widget.param);
+    //final viewModel = TaskViewModel(widget.param);
+    final viewModel = watch(taskViewProviderFamily(widget.param));
+    print(taskViewProviderFamily(widget.param));
 
     viewModel.setValidateTitle(true);
 
@@ -113,11 +127,11 @@ class _AddDialogState extends State<AddDialog> {
     );
   }
 
-  Widget _buildAddButton(BuildContext context) {
+  Widget _buildAddButton(BuildContext context, watch) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: RaisedButton(
-        onPressed: () => tapAddButton(context),
+        onPressed: () => tapAddButton(context, watch),
         color: Theme.of(context).primaryColor,
         padding: const EdgeInsets.all(20),
         child: Center(

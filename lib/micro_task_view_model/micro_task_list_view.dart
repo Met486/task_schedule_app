@@ -57,23 +57,26 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
           //if (watch(taskFamily('1'))) {
           print(
               'taskFamily(1).tasks.isEmpty : ${watch(taskFamily('1')).tasks.isEmpty}');
-          if (watch(taskFamily('1')).tasks.isEmpty) {
+          if (watch(taskViewProviderFamily(widget.param)).tasks.isEmpty) {
+            //if (watch(taskFamily('1')).tasks.isEmpty) {
             //if (taskViewModel.tasks.isEmpty) {
             //todo
             // if (TaskViewModel('1').tasks.isEmpty) {
             //if (taskViewModel[].tasks.isEmpty) {
-            // return _emptyView();
-            return Text(
-                '${watch(taskViewProviderFamily(widget.param)).tasks.length}');
+            return _emptyView();
+//            return Text(
+//                '${watch(taskViewProviderFamily(widget.param)).tasks.length}');
           }
           return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: ListView.separated(
+              height: MediaQuery.of(context).size.height,
+              child: ListView.separated(
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   print("アイテムを表示 widget.param ${widget.param}"); //todo
                   //final task = TaskViewModel(widget.param).tasks[index];
-                  final task = watch(taskFamily('1')).tasks[index];
+                  final task =
+                      watch(taskViewProviderFamily(widget.param)).tasks[index];
+                  //final task = watch(taskFamily('1')).tasks[index];
                   //final task = TaskViewModel('1').tasks[index];
                   //final task = taskViewModel.tasks[index];
                   //var task = taskViewModel.tasks[index];
@@ -81,11 +84,16 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                     key: UniqueKey(),
                     onDismissed: (direction) {
                       if (direction == DismissDirection.endToStart) {
+                        watch(taskViewProviderFamily(widget.param))
+                            .deleteTask(index, task.id);
                         //TaskViewModel('1').deleteTask(index, task.id);
-                        taskViewModel.deleteTask(index, task.id);
+                        //taskViewModel.deleteTask(index, task.id);
+
                       } else {
+                        watch(taskViewProviderFamily(widget.param))
+                            .toggleDone(index, true);
                         //TaskViewModel('1').toggleDone(index, true);
-                        taskViewModel.toggleDone(index, true);
+                        //taskViewModel.toggleDone(index, true);
                       }
                     },
                     background: _buildDismissibleBackgroundContainer(false),
@@ -101,6 +109,7 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                                 title: Text('Test'),
                                 content: AddDialog(
                                   param: widget.param,
+                                  editTask: task,
                                 ),
                               );
                             });
@@ -108,10 +117,12 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                     ),
                   );
                 },
+                itemCount:
+                    watch(taskViewProviderFamily(widget.param)).tasks.length,
                 separatorBuilder: (_, __) => const Divider(),
                 //itemCount: TaskViewModel('1').tasks.length //todo
-                itemCount: taskViewModel.tasks.length),
-          );
+                //itemCount: taskViewModel.tasks.length),
+              ));
         }),
       ],
     );

@@ -1,9 +1,8 @@
 //タスクを管理する3つの大枠を管理
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:task_schedule_app/micro_task_view_model/micro_task_list_view.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
 class TaskList extends StatefulWidget {
   TaskList({Key key}) : super(key: key);
@@ -39,8 +38,9 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     //    final Size size = MediaQuery.of(context).size;
-    return Consumer<TaskViewModel>(builder: (context, taskViewModel, _) {
-      //TODO いらないかも
+//    return Consumer<TaskViewModel>(builder: (context, taskViewModel, _) {
+    return Consumer(builder: (context, taskViewModel, _) {
+// TODO いらないかも
       return AnimatedContainer(
           color: Colors.white24, //TODO 表示領域確認
           duration: Duration(seconds: 1),

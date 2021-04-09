@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_schedule_app/add_dialog/add_dialog.dart';
 import 'package:task_schedule_app/task_item.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model.dart';
@@ -17,7 +17,11 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
   @override
   Widget build(BuildContext context) {
     //final TaskViewModel taskViewModel = Provider.of<TaskViewModel>(context);
-    //final taskViewModel = TaskViewModel(param: '1');
+    final taskViewModel = TaskViewModel('1');
+    final taskFamily =
+        Provider.family<TaskViewModel, String>((ref, String param) {
+      return TaskViewModel(param);
+    });
 
     return ListView(
       padding: EdgeInsets.zero,
@@ -38,12 +42,17 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                 });
           },
         ),
-        Consumer<TaskViewModel>(builder: (
+        Consumer(builder: (
           context,
-          taskViewModel,
+          //taskViewModel,
+          read,
           _,
         ) {
+          //if (read(taskFamily('1'))) {
           if (taskViewModel.tasks.isEmpty) {
+            //todo){
+            // if (TaskViewModel('1').tasks.isEmpty) {
+            //if (taskViewModel[].tasks.isEmpty) {
             return _emptyView();
           }
           return SizedBox(
@@ -52,14 +61,17 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   print("アイテムを表示"); //todo
-                  final task = taskViewModel.tasks[index];
+                  //final task = TaskViewModel('1').tasks[index];
+                  //final task = taskViewModel.tasks[index];
                   //var task = taskViewModel.tasks[index];
                   return Dismissible(
                     key: UniqueKey(),
                     onDismissed: (direction) {
                       if (direction == DismissDirection.endToStart) {
+                        //TaskViewModel('1').deleteTask(index, task.id);
                         taskViewModel.deleteTask(index, task.id);
                       } else {
+                        //TaskViewModel('1').toggleDone(index, true);
                         taskViewModel.toggleDone(index, true);
                       }
                     },
@@ -84,6 +96,7 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                   );
                 },
                 separatorBuilder: (_, __) => const Divider(),
+                //itemCount: TaskViewModel('1').tasks.length //todo
                 itemCount: taskViewModel.tasks.length),
           );
         }),

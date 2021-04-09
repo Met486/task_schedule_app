@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/all.dart';
 import 'package:task_schedule_app/task.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
@@ -22,24 +22,30 @@ class _AddDialogState extends State<AddDialog> {
     return Container(
       width: 300,
       height: 300,
-      child: Consumer<TaskViewModel>(
+      child: Consumer(
         builder: (context, viewModel, _) {
           return ListView(
             children: <Widget>[
               _buildInputField(
                 context,
                 title: 'Title',
-                textEditingController: viewModel.titleController,
+                //textEditingController: viewModel.titleController,
+                textEditingController: TaskViewModel('1').titleController,
+
                 errorText:
-                    viewModel.validateTitle ? viewModel.strValidateTitle : null,
+                    //   viewModel.validateTitle ? viewModel.strValidateTitle : null,
+                    TaskViewModel('1').validateTitle
+                        ? TaskViewModel('1').strValidateTitle
+                        : null,
                 didChanged: (_) {
-                  viewModel.updateValidateTitle();
+                  //viewModel.updateValidateTitle();
+                  TaskViewModel('1').updateValidateTitle();
                 },
               ),
               _buildInputField(
                 context,
                 title: 'subtitle',
-                textEditingController: viewModel.subtitleController,
+                textEditingController: TaskViewModel('1').subtitleController,
                 errorText: null,
               ),
               _buildAddButton(context),
@@ -55,16 +61,29 @@ class _AddDialogState extends State<AddDialog> {
   }
 
   void tapAddButton(BuildContext context) {
-    final viewModel = Provider.of<TaskViewModel>(context, listen: false);
+    //final viewModel = Provider.of<TaskViewModel>(context, listen: false);
+
+    //final viewModel = StateNotifierProvider((ref) => TaskViewModel('1'));
+    final viewModel = TaskViewModel(widget.param);
+
     viewModel.setValidateTitle(true);
+
+    print('widget.edittask : ${widget.editTask}');
 
     if (viewModel.validateTaskTitle()) {
       _isEdit()
           ? viewModel.updateTask(widget.editTask)
           : viewModel.addTask(widget.param);
+      print('タスクの可否をチェック');
       Navigator.of(context).pop();
     }
-    viewModel.notifyListeners();
+    print('add button');
+    print('widget param is ${viewModel.param}');
+    //viewModel.addTask(widget.param);
+
+    //Navigator.of(context).pop();
+
+    //viewModel.notifyListeners();
   }
 
   Widget _buildInputField(BuildContext context,

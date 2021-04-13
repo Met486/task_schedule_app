@@ -32,6 +32,27 @@ class TaskItem extends StatelessWidget {
               );
             });
       },
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        padding: EdgeInsets.all(10),
+        color: Colors.white,
+        child: Column(
+          children: [
+            Text(
+              task.title,
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            ),
+            Text(
+              task.subtitle,
+              style: TextStyle(color: Colors.black),
+            ),
+            Text(
+                "${task.deadlineAt.year}/${task.deadlineAt.month}/${task.deadlineAt.day}")
+          ],
+        ),
+      ),
+
+      /*
       child: ListTile(
         tileColor: Colors.white,
         title: Text(task.title),
@@ -39,6 +60,8 @@ class TaskItem extends StatelessWidget {
 
         //      tileColor: priorityColors(task.priority),
       ),
+
+       */
     );
   }
 

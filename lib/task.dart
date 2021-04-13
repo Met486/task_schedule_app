@@ -9,7 +9,8 @@ class Task {
       this.taskType,
       this.isDone = false,
       this.updatedAt,
-      this.createdAt});
+      this.createdAt,
+      this.deadlineAt});
 
   String id;
   String title;
@@ -19,6 +20,7 @@ class Task {
   bool isDone;
   DateTime updatedAt;
   DateTime createdAt;
+  DateTime deadlineAt;
 
   assignUUID() {
     id = Uuid().v4();
@@ -37,7 +39,8 @@ class Task {
       taskType: json["taskType"],
       isDone: (json["isDone"] == 1) ? true : false,
       createdAt: DateTime.parse(json["createdAt"]).toLocal(),
-      updatedAt: DateTime.parse(json["updateAt"]).toLocal());
+      updatedAt: DateTime.parse(json["updateAt"]).toLocal(),
+      deadlineAt: DateTime.parse(json["deadlineAt"]).toLocal());
 
   Map<String, dynamic> toMap() => {
         "id": id,
@@ -46,6 +49,7 @@ class Task {
         "taskType": taskType,
         "isDone": isDone ? 1 : 0,
         "createdAt": createdAt.toUtc().toIso8601String(),
-        "updateAt": updatedAt.toUtc().toIso8601String()
+        "updateAt": updatedAt.toUtc().toIso8601String(),
+        "deadlineAt": deadlineAt.toUtc().toIso8601String()
       };
 }

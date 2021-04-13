@@ -37,7 +37,8 @@ class DBProvider {
         "taskType INTEGER,"
         "createdAt TEXT,"
         "updateAt TEXT,"
-        "isDone INTEGER"
+        "isDone INTEGER,"
+        "deadlineAt TEXT"
         ")");
   }
 

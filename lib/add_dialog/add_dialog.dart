@@ -14,7 +14,8 @@ class AddDialog extends StatefulWidget {
 }
 
 class _AddDialogState extends State<AddDialog> {
-  DateTime _date = new DateTime.now();
+  DateTime _date = new DateTime(DateTime.now().year, DateTime.now().month,
+      DateTime.now().day, 0, 0, 0, 0, 0);
 
   @override
   Widget build(BuildContext context) {
@@ -29,30 +30,21 @@ class _AddDialogState extends State<AddDialog> {
               _buildInputField(
                 context,
                 title: 'Title',
-//                textEditingController:
-//                    watch(taskViewProviderFamily(widget.param)).titleController,
                 textEditingController: _model.titleController,
-
-//                errorText:
-//                    watch(taskViewProviderFamily(widget.param)).validateTitle
-//                        ? watch(taskViewProviderFamily(widget.param))
-//                            .strValidateTitle
-                //                  :null,
                 errorText:
                     _model.validateTitle ? _model.strValidateTitle : null,
-
                 didChanged: (_) {
-                  //watch(taskViewProviderFamily(widget.param))
                   _model.updateValidateTitle();
                 },
               ),
               _buildInputField(
                 context,
                 title: 'subtitle',
-                textEditingController:
-                    //   watch(taskViewProviderFamily(widget.param))
-                    _model.subtitleController,
+                textEditingController: _model.subtitleController,
                 errorText: null,
+                didChanged: (_) {
+                  _model.updateValidateSubtitle();
+                },
               ),
               ElevatedButton(
                   onPressed: () => _selectDate(context),
@@ -136,6 +128,7 @@ class _AddDialogState extends State<AddDialog> {
         initialDate: _date,
         firstDate: new DateTime(2016),
         lastDate: new DateTime.now().add(new Duration(days: 360)));
+    _date = DateTime(_date.year, _date.month, _date.day, 0, 0, 0, 0, 0);
     if (picked != null) setState(() => _date = picked);
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:task_schedule_app/calendar.dart';
 import 'package:task_schedule_app/settings.dart';
 import 'package:task_schedule_app/task_list.dart';
-import 'package:task_schedule_app/top.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static List<Widget> _pageList = [
-    TopPage(),
+    TableTasksExample(),
     TaskList(),
     SettingPage(),
   ];

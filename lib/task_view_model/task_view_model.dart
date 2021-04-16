@@ -15,8 +15,12 @@ class TaskViewModel extends ChangeNotifier {
 
   String _strValidateTitle = '';
   String get strValidateTitle => _strValidateTitle;
+  String _strValidateSubtitle = '';
+  String get strValidateSubtitle => _strValidateSubtitle;
   bool _validateTitle = false;
   bool get validateTitle => _validateTitle;
+  bool _validateSubtitle = false;
+  bool get validateSubtitle => _validateSubtitle;
   List<Task> _tasks = [];
 
   final _taskController = StreamController<List<Task>>();
@@ -29,11 +33,12 @@ class TaskViewModel extends ChangeNotifier {
   getTasks() async {
     _tasks = (await DBProvider.db.getAllTasks(param));
     _taskController.sink.add(await DBProvider.db.getAllTasks(param));
+    notifyListeners();
 
-    print("taskViewModel getTasks is Called");
-    print("get tasks is called param : " + param);
-    print('TaskViewModel param:${param} tasks.length:${tasks.length}');
-    print("getTasks _tasks.length : ${_tasks.length}");
+    // print("taskViewModel getTasks is Called");
+    // print("get tasks is called param : " + param);
+    // print('TaskViewModel param:${param} tasks.length:${tasks.length}');
+    // print("getTasks _tasks.length : ${_tasks.length}");
   }
 
   UnmodifiableListView<Task> get tasks {
@@ -52,13 +57,36 @@ class TaskViewModel extends ChangeNotifier {
     }
   }
 
+  bool validateTaskSubtitle() {
+    if (editingSubtitle.isEmpty) {
+      _strValidateSubtitle = '';
+      notifyListeners();
+      return true;
+    } else {
+      _strValidateSubtitle = '';
+      _validateTitle = false;
+      return true;
+    }
+  }
+
   void setValidateTitle(bool value) {
     _validateTitle = value;
+  }
+
+  void setValidateSubtitle(bool value) {
+    _validateSubtitle = value;
   }
 
   void updateValidateTitle() {
     if (validateTitle) {
       validateTaskTitle();
+      notifyListeners();
+    }
+  }
+
+  void updateValidateSubtitle() {
+    if (validateSubtitle) {
+      validateTaskSubtitle();
       notifyListeners();
     }
   }
@@ -73,7 +101,7 @@ class TaskViewModel extends ChangeNotifier {
       taskType: int.parse(param),
     );
     _tasks.add(newTask);
-    print("task_view_model addTask is called");
+    // print("task_view_model addTask is called");
     newTask.assignUUID();
     DBProvider.db.createTask(newTask);
     getTasks();
@@ -87,16 +115,16 @@ class TaskViewModel extends ChangeNotifier {
       //return task.createdAt == updateTask.createdAt;
       return task.id == updateTask.id;
     });
-    print("task.length : ${tasks.length}");
-    print("updateTask.id : ${updateTask.id}");
-    print("updateIndex : ${updateIndex}");
+    // print("task.length : ${tasks.length}");
+    // print("updateTask.id : ${updateTask.id}");
+    // print("updateIndex : ${updateIndex}");
     updateTask.title = titleController.text;
     updateTask.subtitle = subtitleController.text;
     updateTask.updatedAt = DateTime.now();
     _tasks[updateIndex] = updateTask;
     DBProvider.db.updateTask(updateTask);
     getTasks();
-
+    notifyListeners();
     clear();
   }
 

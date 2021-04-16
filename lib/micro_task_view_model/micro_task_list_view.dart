@@ -16,6 +16,13 @@ class MicroTaskListView extends StatefulWidget {
 
 class _MicroTaskListViewState extends State<MicroTaskListView> {
   @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final taskViewModel = TaskViewModel('1');
     final taskFamily =
@@ -48,8 +55,6 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
           watch,
           child,
         ) {
-          print(
-              'taskFamily(1).tasks.isEmpty : ${watch(taskFamily('1')).tasks.isEmpty}');
           if (watch(taskViewProviderFamily(widget.param)).tasks.isEmpty) {
             //todo
             return _emptyView();
@@ -62,35 +67,37 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                   print("アイテムを表示 widget.param ${widget.param}"); //todo
                   final task =
                       watch(taskViewProviderFamily(widget.param)).tasks[index];
-                  return Dismissible(
-                    key: UniqueKey(),
-                    onDismissed: (direction) {
-                      if (direction == DismissDirection.endToStart) {
-                        watch(taskViewProviderFamily(widget.param))
-                            .deleteTask(index, task.id);
-                      } else {
-                        watch(taskViewProviderFamily(widget.param))
-                            .toggleDone(index, true);
-                      }
-                    },
-                    background: _buildDismissibleBackgroundContainer(false),
-                    secondaryBackground:
-                        _buildDismissibleBackgroundContainer(true),
-                    child: TaskItem(
-                      task: task,
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Test'),
-                                content: AddDialog(
-                                  param: widget.param,
-                                  editTask: task,
-                                ),
-                              );
-                            });
+                  return Center(
+                    child: Dismissible(
+                      key: UniqueKey(),
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.endToStart) {
+                          watch(taskViewProviderFamily(widget.param))
+                              .deleteTask(index, task.id);
+                        } else {
+                          watch(taskViewProviderFamily(widget.param))
+                              .toggleDone(index, true);
+                        }
                       },
+                      background: _buildDismissibleBackgroundContainer(false),
+                      secondaryBackground:
+                          _buildDismissibleBackgroundContainer(true),
+                      child: TaskItem(
+                        task: task,
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Test'),
+                                  content: AddDialog(
+                                    param: widget.param,
+                                    editTask: task,
+                                  ),
+                                );
+                              });
+                        },
+                      ),
                     ),
                   );
                 },
@@ -138,114 +145,3 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
     );
   }
 }
-
-/*
-class MicroTaskListView extends StatelessWidget {
-  const MicroTaskListView({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    //final TaskViewModel taskViewModel = Provider.of<TaskViewModel>(context);
-    return ListView(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      children: [
-        ElevatedButton(
-          child: const Text('追加'),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Test'),
-                    content: AddDialog(),
-                  );
-                });
-          },
-        ),
-        Consumer<TaskViewModel>(builder: (context, taskViewModel, _) {
-          if (taskViewModel.tasks.isEmpty) {
-            return _emptyView();
-          }
-          return Expanded(
-            child: SizedBox(
-              height: 400,
-              child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) {
-                    final task = taskViewModel.tasks[index];
-                    //var task = taskViewModel.tasks[index];
-                    return Dismissible(
-                      key: UniqueKey(),
-                      onDismissed: (direction) {
-                        if (direction == DismissDirection.endToStart) {
-                          taskViewModel.deleteTask(index, task.id);
-                        } else {
-                          taskViewModel.toggleDone(index, true);
-                        }
-                      },
-                      background: _buildDismissibleBackgroundContainer(false),
-                      secondaryBackground:
-                          _buildDismissibleBackgroundContainer(true),
-                      child: TaskItem(
-                        task: task,
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Test'),
-                                  content: AddDialog(),
-                                );
-                              });
-                        },
-                      ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemCount: taskViewModel.tasks.length),
-            ),
-          );
-        })
-      ],
-    );
-  }
-
-  Container _buildDismissibleBackgroundContainer(bool isSecond) {
-    return Container(
-      color: isSecond ? Colors.red : Colors.green,
-      alignment: isSecond ? Alignment.centerRight : Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Text(
-          isSecond ? 'Delete' : 'Done',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _emptyView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('なにもない'),
-          SizedBox(height: 16),
-          Text(
-            '追加しよう',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/

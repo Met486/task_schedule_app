@@ -1,7 +1,10 @@
-/*
+// Copyright 2019 Aleksander Woźniak
+// SPDX-License-Identifier: Apache-2.0
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:task_schedule_app/task.dart';
+import 'package:task_schedule_app/utils.dart';
 
 class TableTasksExample extends StatefulWidget {
   @override
@@ -9,7 +12,7 @@ class TableTasksExample extends StatefulWidget {
 }
 
 class _TableTasksExampleState extends State<TableTasksExample> {
-  late final ValueNotifier<List<Task>> _selectedTasks;
+  ValueNotifier<List<Task>> _selectedTasks;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date
@@ -147,5 +150,3 @@ class _TableTasksExampleState extends State<TableTasksExample> {
     );
   }
 }
-
- */

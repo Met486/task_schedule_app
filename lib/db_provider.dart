@@ -60,6 +60,15 @@ class DBProvider {
     return list;
   }
 
+  getAllTasksDays(DateTime day) async {
+    final db = await database;
+    var res = await db.query(_tableName,
+        where: 'deadlineAt = ?', whereArgs: [day.toIso8601String()]);
+    List<Task> list =
+        res.isNotEmpty ? res.map((c) => Task.fromMap(c)).toList() : [];
+    return list;
+  }
+
   updateTask(Task task) async {
     final db = await database;
     var res = await db.update(_tableName, task.toMap(),

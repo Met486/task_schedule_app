@@ -1,80 +1,126 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:task_schedule_app/add_dialog.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_schedule_app/add_dialog/add_dialog.dart';
+import 'package:task_schedule_app/main.dart';
 import 'package:task_schedule_app/task_item.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
-class MicroTaskListView extends StatelessWidget {
-  const MicroTaskListView({
-    Key key,
-  }) : super(key: key);
+class MicroTaskListView extends StatefulWidget {
+  final String param;
+  MicroTaskListView({this.param, Key key}) : super(key: key);
+
+  @override
+  _MicroTaskListViewState createState() => _MicroTaskListViewState();
+}
+
+class _MicroTaskListViewState extends State<MicroTaskListView> {
+  @override
+  final bool autofocus = true;
+  void initState() {
+    // TODO: implement initState
+    this.autofocus;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //final TaskViewModel taskViewModel = Provider.of<TaskViewModel>(context);
-
-    return ListView(
-      shrinkWrap: true,
+    return Stack(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Test'),
-                    content: AddDialog(),
-                  );
-                });
-          },
-        ),
-        Consumer<TaskViewModel>(builder: (context, taskViewModel, _) {
-          if (taskViewModel.tasks.isEmpty) {
+        Consumer(builder: (
+          context,
+          watch,
+          child,
+        ) {
+          if (watch(taskViewProviderFamily(widget.param)).tasks.isEmpty) {
+            //todo
             return _emptyView();
           }
-          return Expanded(
-            child: SizedBox(
-              height: 400,
+          return Container(
+              height: MediaQuery.of(context).size.height,
+              color: Focus.of(context).hasPrimaryFocus ? Colors.black12 : null,
               child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final task = taskViewModel.tasks[index];
-                    //var task = taskViewModel.tasks[index];
-                    return Dismissible(
+                padding: EdgeInsets.only(top: 5),
+                itemBuilder: (context, index) {
+                  print("アイテムを表示 widget.param ${widget.param}"); //todo
+                  final task =
+                      watch(taskViewProviderFamily(widget.param)).tasks[index];
+                  return Center(
+                    child: Dismissible(
                       key: UniqueKey(),
                       onDismissed: (direction) {
                         if (direction == DismissDirection.endToStart) {
-                          taskViewModel.deleteTask(index);
+                          watch(taskViewProviderFamily(widget.param))
+                              .deleteTask(index, task.id);
                         } else {
-                          taskViewModel.toggleDone(index, true);
+                          watch(taskViewProviderFamily(widget.param))
+                              .toggleDone(index, true);
                         }
                       },
                       background: _buildDismissibleBackgroundContainer(false),
                       secondaryBackground:
                           _buildDismissibleBackgroundContainer(true),
-                      child: TaskItem(
-                        task: task,
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Test'),
-                                  content: AddDialog(),
-                                );
-                              });
-                        },
+                      child: Container(
+                        color: Focus.of(context).hasPrimaryFocus
+                            ? Colors.black12
+                            : null,
+                        child: TaskItem(
+                          task: task,
+                          onTap: () async {
+                            await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Test'),
+                                    content: AddDialog(
+                                      param: widget.param,
+                                      editTask: task,
+                                    ),
+                                  );
+                                });
+                          },
+                        ),
                       ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemCount: taskViewModel.tasks.length),
-            ),
-          );
+                    ),
+                  );
+                },
+                itemCount:
+                    watch(taskViewProviderFamily(widget.param)).tasks.length,
+                separatorBuilder: (_, __) => const Divider(),
+              ));
         }),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: ElevatedButton(
+            child: const Text(
+              '+',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.white,
+              onPrimary: Colors.blue,
+              shape: const CircleBorder(
+                side: BorderSide(
+                  color: Colors.blue,
+                  width: 1.5,
+                  style: BorderStyle.solid,
+                ),
+              ),
+            ),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Test'),
+                      content: AddDialog(param: widget.param),
+                    );
+                  });
+            },
+          ),
+        ),
       ],
     );
   }
@@ -100,13 +146,14 @@ class MicroTaskListView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('なにもない'),
-          SizedBox(height: 16),
-          Text(
-            '追加しよう',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
+          Expanded(child: Text('なにもない')),
+          Expanded(
+            child: Text(
+              '追加しよう',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+              ),
             ),
           ),
         ],

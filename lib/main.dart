@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task_schedule_app/gyro_list.dart';
 import 'package:task_schedule_app/home_page.dart';
 import 'package:task_schedule_app/task_view_model/task_view_model.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model2.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model3.dart';
+
+import 'gyro_list.dart';
+
+final taskViewProviderFamily =
+    ChangeNotifierProviderFamily((ref, String param) => TaskViewModel(param));
+
+// final timerProvider = StateNotifierProvider(
+//   (ref) => TimerNotifier(),
+// );
+
+SharedPreferences testPrefs;
+GyroList gyroList = new GyroList();
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => TaskViewModel()),
-      ChangeNotifierProvider(create: (context) => TaskViewModel2()),
-      ChangeNotifierProvider(create: (context) => TaskViewModel3()),
-    ],
-    child: HomePage(),
-  )
-//    ChangeNotifierProvider(
-//      create: (context) => TaskViewModel(),
-//      child: HomePage(),
-//    ),
-      );
+  runApp(ProviderScope(child: HomePage()));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

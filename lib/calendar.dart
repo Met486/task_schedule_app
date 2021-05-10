@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:task_schedule_app/add_dialog/add_dialog.dart';
 import 'package:task_schedule_app/task.dart';
 import 'package:task_schedule_app/utils.dart';
 
@@ -24,7 +25,6 @@ class _TableTasksExampleState extends State<TableTasksExample> {
   @override
   void initState() {
     super.initState();
-
     _selectedDay = _focusedDay;
     _selectedTasks = ValueNotifier(_getTasksForDay(_selectedDay));
   }
@@ -36,9 +36,9 @@ class _TableTasksExampleState extends State<TableTasksExample> {
   }
 
   List<Task> _getTasksForDay(DateTime day) {
-    // Implementation example
     return kTasks[day] ?? [];
   }
+  //
 
   List<Task> _getTasksForRange(DateTime start, DateTime end) {
     // Implementation example
@@ -52,6 +52,7 @@ class _TableTasksExampleState extends State<TableTasksExample> {
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
+        init();
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
         _rangeStart = null; // Important to clean those
@@ -70,6 +71,7 @@ class _TableTasksExampleState extends State<TableTasksExample> {
       _rangeStart = start;
       _rangeEnd = end;
       _rangeSelectionMode = RangeSelectionMode.toggledOn;
+      init();
     });
 
     // `start` or `end` could be null
@@ -82,14 +84,31 @@ class _TableTasksExampleState extends State<TableTasksExample> {
     }
   }
 
+  final List<Color> colorList = [
+    Colors.green[100],
+    Colors.red[100],
+    Colors.blue[100],
+    Colors.yellow[100],
+    Colors.purple[100]
+  ];
+
   @override
   Widget build(BuildContext context) {
+    init();
+    print('build complete');
     return Scaffold(
       appBar: AppBar(
         title: Text('TableCalendar - Tasks'),
       ),
       body: Column(
         children: [
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  init();
+                });
+              },
+              child: Text('debug')),
           TableCalendar<Task>(
             firstDay: kFirstDay,
             lastDay: kLastDay,
@@ -103,7 +122,7 @@ class _TableTasksExampleState extends State<TableTasksExample> {
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: CalendarStyle(
               // Use `CalendarStyle` to customize the UI
-              outsideDaysVisible: false,
+              outsideDaysVisible: true,
             ),
             onDaySelected: _onDaySelected,
             onRangeSelected: _onRangeSelected,
@@ -136,8 +155,29 @@ class _TableTasksExampleState extends State<TableTasksExample> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(
-                        onTap: () => print('${value[index]}'),
-                        title: Text('${value[index]}'),
+                        tileColor: colorList[value.elementAt(0).taskType],
+                        // onTap: () => print('${value[index].title}'),
+                        onTap: () async {
+                          print("タスクをタップしました");
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Task'),
+                                  content: AddDialog(
+                                    editTask: value[index],
+                                  ),
+                                );
+                              }).then((_) {
+                            setState(() {
+                              init();
+                              // todo DBの処理が終わってない段階で更新をかけている可能性が高い
+                              // TableTasksExample();
+                              // build(context);
+                            });
+                          });
+                        },
+                        title: Text('${value[index].title}'),
                       ),
                     );
                   },

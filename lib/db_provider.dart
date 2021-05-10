@@ -51,10 +51,18 @@ class DBProvider {
   }
 
   //TODO taskTypeに応じた引数を取り、WHERE句で適切に集める
-  getAllTasks(String taskType) async {
+  getAllTasksType(String taskType) async {
     final db = await database;
     var res = await db
         .query(_tableName, where: 'taskType = ?', whereArgs: [taskType]);
+    List<Task> list =
+        res.isNotEmpty ? res.map((c) => Task.fromMap(c)).toList() : [];
+    return list;
+  }
+
+  getAllTasks() async {
+    final db = await database;
+    var res = await db.query(_tableName);
     List<Task> list =
         res.isNotEmpty ? res.map((c) => Task.fromMap(c)).toList() : [];
     return list;
@@ -73,6 +81,7 @@ class DBProvider {
     final db = await database;
     var res = await db.update(_tableName, task.toMap(),
         where: "id = ?", whereArgs: [task.id]);
+    print('update task is called'); //todo
     return res;
   }
 

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:task_schedule_app/main.dart';
-import 'package:task_schedule_app/task.dart';
 
+import '../main.dart';
+import '../task.dart';
+import '../task_item.dart';
+
+/// Taskの編集を行うダイアログ
 class AddDialog extends StatefulWidget {
+  /// taskTypeを扱うための変数
   final String param;
+
+  /// 変更を行うタスク
   final Task editTask;
 
+  /// コンストラクタ
   AddDialog({this.param, key, this.editTask}) : super(key: key);
 
   @override
@@ -14,8 +21,16 @@ class AddDialog extends StatefulWidget {
 }
 
 class _AddDialogState extends State<AddDialog> {
-  DateTime _date = new DateTime(DateTime.now().year, DateTime.now().month,
+  DateTime _date = DateTime(DateTime.now().year, DateTime.now().month,
       DateTime.now().day, 0, 0, 0, 0, 0);
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEdit()) {
+      _date = widget.editTask.deadlineAt;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +40,15 @@ class _AddDialogState extends State<AddDialog> {
       child: Consumer(
         builder: (context, watch, child) {
           final _model = watch(taskViewProviderFamily(widget.param));
+          if (_isEdit()) {
+            // _model.titleController.text = widget.editTask.title;
+            _model.titleController.value = _model.titleController.value
+                .copyWith(text: widget.editTask.title);
+            // _model.subtitleController.text = widget.editTask.subtitle;
+            _model.subtitleController.value = _model.subtitleController.value
+                .copyWith(text: widget.editTask.subtitle);
+          }
+
           return ListView(
             children: <Widget>[
               _buildInputField(
@@ -47,9 +71,12 @@ class _AddDialogState extends State<AddDialog> {
                 },
               ),
               ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: new Text(
-                      "現在の締め切り : ${_date.year}/${_date.month}/${_date.day}")),
+                onPressed: () {
+                  _selectDate(context);
+                },
+                child: new Text(
+                    "現在の締め切り : ${_date.year}/${_date.month}/${_date.day}"),
+              ),
               _buildAddButton(context, watch),
             ],
           );
@@ -70,11 +97,13 @@ class _AddDialogState extends State<AddDialog> {
 
     if (viewModel.validateTaskTitle()) {
       _isEdit()
-          ? viewModel.updateTask(
-              widget.editTask,
-            )
+          ? viewModel.updateTask(widget.editTask, _date)
           : viewModel.addTask(widget.param, _date);
-      Navigator.of(context).pop();
+
+      setState(() {
+        TaskItemState().reload();
+      });
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -107,10 +136,12 @@ class _AddDialogState extends State<AddDialog> {
   Widget _buildAddButton(BuildContext context, watch) {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: RaisedButton(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Theme.of(context).primaryColor,
+          padding: const EdgeInsets.all(20),
+        ),
         onPressed: () => tapAddButton(context, watch),
-        color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.all(20),
         child: Center(
           child: Text(
             _isEdit() ? 'Save' : 'Add',

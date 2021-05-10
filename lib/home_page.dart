@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:task_schedule_app/calendar.dart';
 import 'package:task_schedule_app/settings.dart';
 import 'package:task_schedule_app/task_list.dart';
+
+import 'calendar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _HomePageState extends State<HomePage> {
 
   static List<Widget> _pageList = [
     TableTasksExample(),
+    // gyro(),
     TaskList(),
     SettingPage(),
   ];

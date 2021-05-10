@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_schedule_app/add_dialog/add_dialog.dart';
 import 'package:task_schedule_app/main.dart';
 import 'package:task_schedule_app/task_item.dart';
-import 'package:task_schedule_app/task_view_model/task_view_model.dart';
 
 class MicroTaskListView extends StatefulWidget {
   final String param;
@@ -16,40 +15,17 @@ class MicroTaskListView extends StatefulWidget {
 
 class _MicroTaskListViewState extends State<MicroTaskListView> {
   @override
+  final bool autofocus = true;
   void initState() {
     // TODO: implement initState
-
+    this.autofocus;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final taskViewModel = TaskViewModel('1');
-    final taskFamily =
-        Provider.family<TaskViewModel, String>((ref, String param) {
-      return TaskViewModel(param);
-    });
-    print(taskViewModel.tasks.length);
-
-    return ListView(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
+    return Stack(
       children: [
-        ElevatedButton(
-          child: const Text('追加'),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Test'),
-                    content: AddDialog(
-                      param: widget.param,
-                    ),
-                  );
-                });
-          },
-        ),
         Consumer(builder: (
           context,
           watch,
@@ -59,10 +35,11 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
             //todo
             return _emptyView();
           }
-          return SizedBox(
+          return Container(
               height: MediaQuery.of(context).size.height,
+              color: Focus.of(context).hasPrimaryFocus ? Colors.black12 : null,
               child: ListView.separated(
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.only(top: 5),
                 itemBuilder: (context, index) {
                   print("アイテムを表示 widget.param ${widget.param}"); //todo
                   final task =
@@ -82,21 +59,26 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                       background: _buildDismissibleBackgroundContainer(false),
                       secondaryBackground:
                           _buildDismissibleBackgroundContainer(true),
-                      child: TaskItem(
-                        task: task,
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Test'),
-                                  content: AddDialog(
-                                    param: widget.param,
-                                    editTask: task,
-                                  ),
-                                );
-                              });
-                        },
+                      child: Container(
+                        color: Focus.of(context).hasPrimaryFocus
+                            ? Colors.black12
+                            : null,
+                        child: TaskItem(
+                          task: task,
+                          onTap: () async {
+                            await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Test'),
+                                    content: AddDialog(
+                                      param: widget.param,
+                                      editTask: task,
+                                    ),
+                                  );
+                                });
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -106,6 +88,39 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
                 separatorBuilder: (_, __) => const Divider(),
               ));
         }),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: ElevatedButton(
+            child: const Text(
+              '+',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.white,
+              onPrimary: Colors.blue,
+              shape: const CircleBorder(
+                side: BorderSide(
+                  color: Colors.blue,
+                  width: 1.5,
+                  style: BorderStyle.solid,
+                ),
+              ),
+            ),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Test'),
+                      content: AddDialog(param: widget.param),
+                    );
+                  });
+            },
+          ),
+        ),
       ],
     );
   }
@@ -131,13 +146,14 @@ class _MicroTaskListViewState extends State<MicroTaskListView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('なにもない'),
-          SizedBox(height: 16),
-          Text(
-            '追加しよう',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
+          Expanded(child: Text('なにもない')),
+          Expanded(
+            child: Text(
+              '追加しよう',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+              ),
             ),
           ),
         ],

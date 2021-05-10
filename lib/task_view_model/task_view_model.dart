@@ -31,8 +31,8 @@ class TaskViewModel extends ChangeNotifier {
   }
 
   getTasks() async {
-    _tasks = (await DBProvider.db.getAllTasks(param));
-    _taskController.sink.add(await DBProvider.db.getAllTasks(param));
+    _tasks = (await DBProvider.db.getAllTasksType(param));
+    _taskController.sink.add(await DBProvider.db.getAllTasksType(param));
     notifyListeners();
 
     // print("taskViewModel getTasks is Called");
@@ -109,8 +109,9 @@ class TaskViewModel extends ChangeNotifier {
     clear();
   }
 
-  void updateTask(Task updateTask) async {
-    _tasks = (await DBProvider.db.getAllTasks(updateTask.taskType.toString()));
+  void updateTask(Task updateTask, DateTime _date) async {
+    _tasks =
+        (await DBProvider.db.getAllTasksType(updateTask.taskType.toString()));
     final updateIndex = _tasks.indexWhere((task) {
       //return task.createdAt == updateTask.createdAt;
       return task.id == updateTask.id;
@@ -121,6 +122,12 @@ class TaskViewModel extends ChangeNotifier {
     updateTask.title = titleController.text;
     updateTask.subtitle = subtitleController.text;
     updateTask.updatedAt = DateTime.now();
+    updateTask.deadlineAt = _date;
+
+    print('updateTask is Called');
+    print('titleController is ${titleController.text}');
+    print('updateTask.title is ${updateTask.title}');
+
     _tasks[updateIndex] = updateTask;
     DBProvider.db.updateTask(updateTask);
     getTasks();
